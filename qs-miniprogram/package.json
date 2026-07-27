@@ -1,0 +1,19 @@
+{
+  "name": "qs-miniprogram",
+  "version": "1.0.0",
+  "description": "电商报价议价系统小程序端",
+  "main": "main.js",
+  "scripts": {
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "dev:h5": "uni -p h5",
+    "build:h5": "uni build -p h5"
+  },
+  "keywords": [
+    "uniapp",
+    "miniprogram",
+    "ecommerce"
+  ],
+  "author": "",
+  "license": "MIT"
+}
