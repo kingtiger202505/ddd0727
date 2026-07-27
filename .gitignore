@@ -7,18 +7,17 @@
 target/
 
 # Dependencies
+.m2/
 .gradle/
-build/
 
 # Logs and temp files
 *.log
 *.tmp
-*.swp
 
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
 
 # Editors
 .vscode/
@@ -31,4 +30,6 @@ htmlcov/
 
 # Package manager caches
 node_modules/
+__pycache__/
+*.egg-info/
 ```

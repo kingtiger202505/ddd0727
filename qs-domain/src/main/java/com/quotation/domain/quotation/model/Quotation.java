@@ -1,5 +1,6 @@
 package com.quotation.domain.quotation.model;
 
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,17 +9,40 @@ import java.time.LocalDateTime;
  * 报价单聚合根
  */
 @Data
+@TableName("quotations")
 public class Quotation {
+    @TableId(type = IdType.AUTO)
     private Long id;
+    
+    @TableField("buyer_id")
     private Long buyerId;
+    
+    @TableField("seller_id")
     private Long sellerId;
+    
+    @TableField("product_id")
     private Long productId;
+    
+    @TableField("product_name")
     private String productName;
+    
+    @TableField("price")
     private BigDecimal price;
+    
+    @TableField("quantity")
     private Integer quantity;
+    
+    @TableField("status")
     private String status; // PENDING, COUNTER_OFFER, ACCEPTED, REJECTED, CLOSED
+    
+    @Version
+    @TableField("version")
     private Integer version;
+    
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
+    
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
 
     public static Quotation create(Long buyerId, Long sellerId, Long productId, String productName, 
