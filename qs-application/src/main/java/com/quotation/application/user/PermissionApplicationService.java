@@ -108,12 +108,14 @@ public class PermissionApplicationService {
         PermissionDTO dto = new PermissionDTO();
         dto.setId(permission.getId());
         dto.setCode(permission.getCode());
-        dto.setName(permission.getName());
+        dto.setPermissionName(permission.getPermissionName());
         dto.setType(permission.getType());
         dto.setParentId(permission.getParentId());
         dto.setPath(permission.getPath());
         dto.setIcon(permission.getIcon());
         dto.setSort(permission.getSort());
+        dto.setDescription(permission.getDescription());
+        dto.setStatus(permission.getStatus());
         dto.setCreatedAt(permission.getCreatedAt());
         return dto;
     }
@@ -125,12 +127,14 @@ public class PermissionApplicationService {
         Permission permission = new Permission();
         permission.setId(dto.getId());
         permission.setCode(dto.getCode());
-        permission.setName(dto.getName());
+        permission.setPermissionName(dto.getPermissionName());
         permission.setType(dto.getType());
         permission.setParentId(dto.getParentId());
         permission.setPath(dto.getPath());
         permission.setIcon(dto.getIcon());
         permission.setSort(dto.getSort());
+        permission.setDescription(dto.getDescription());
+        permission.setStatus(dto.getStatus());
         permission.setCreatedAt(dto.getCreatedAt());
         return permission;
     }
