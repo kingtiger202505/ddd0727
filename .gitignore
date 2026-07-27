@@ -4,23 +4,30 @@
 *.o
 *.obj
 *.out
+target/
 
 # Dependencies
-**/target/
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage/
+htmlcov/
 
 # Logs and temp files
 *.log
 *.tmp
-
-# Editors
-.vscode/
-.idea/
+*.swp
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Original rules preserved
-*.log
+# Editors
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
 ```
