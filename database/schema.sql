@@ -207,6 +207,143 @@ CREATE TABLE IF NOT EXISTS `system_configs` (
     UNIQUE KEY `uk_config_key` (`config_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系统配置表';
 
+-- ============================================
+-- 角色权限管理相关表
+-- ============================================
+
+-- 角色表
+CREATE TABLE IF NOT EXISTS `role` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '角色 ID',
+    `role_name` VARCHAR(50) NOT NULL COMMENT '角色名称',
+    `role_code` VARCHAR(50) NOT NULL COMMENT '角色编码',
+    `description` VARCHAR(200) DEFAULT NULL COMMENT '角色描述',
+    `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_role_code` (`role_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色表';
+
+-- 权限表
+CREATE TABLE IF NOT EXISTS `permission` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '权限 ID',
+    `code` VARCHAR(100) NOT NULL COMMENT '权限编码',
+    `permission_name` VARCHAR(100) NOT NULL COMMENT '权限名称',
+    `type` VARCHAR(20) NOT NULL DEFAULT 'MENU' COMMENT '权限类型：MENU-菜单，BUTTON-按钮，API-接口',
+    `parent_id` BIGINT DEFAULT 0 COMMENT '父级权限 ID',
+    `path` VARCHAR(200) DEFAULT NULL COMMENT '路径/URL',
+    `icon` VARCHAR(100) DEFAULT NULL COMMENT '图标',
+    `sort` INT NOT NULL DEFAULT 0 COMMENT '排序',
+    `description` VARCHAR(200) DEFAULT NULL COMMENT '描述',
+    `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_code` (`code`),
+    KEY `idx_parent_id` (`parent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='权限表';
+
+-- 用户角色关联表
+CREATE TABLE IF NOT EXISTS `user_role` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `user_id` BIGINT NOT NULL COMMENT '用户 ID',
+    `role_id` BIGINT NOT NULL COMMENT '角色 ID',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_role` (`user_id`, `role_id`),
+    KEY `idx_role_id` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色关联表';
+
+-- 角色权限关联表
+CREATE TABLE IF NOT EXISTS `role_permission` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `role_id` BIGINT NOT NULL COMMENT '角色 ID',
+    `permission_id` BIGINT NOT NULL COMMENT '权限 ID',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_role_permission` (`role_id`, `permission_id`),
+    KEY `idx_permission_id` (`permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色权限关联表';
+
+-- ============================================
+-- SKU 管理相关表
+-- ============================================
+
+-- SKU 表
+CREATE TABLE IF NOT EXISTS `sku` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'SKU ID',
+    `product_id` BIGINT NOT NULL COMMENT '商品 ID',
+    `sku_code` VARCHAR(50) NOT NULL COMMENT 'SKU 编码',
+    `specs_json` JSON DEFAULT NULL COMMENT '规格组合 JSON',
+    `price` DECIMAL(10,2) NOT NULL COMMENT '售价',
+    `cost_price` DECIMAL(10,2) DEFAULT NULL COMMENT '成本价',
+    `stock` INT NOT NULL DEFAULT 0 COMMENT '库存数量',
+    `locked_stock` INT NOT NULL DEFAULT 0 COMMENT '锁定库存',
+    `available_stock` INT NOT NULL DEFAULT 0 COMMENT '可用库存',
+    `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0-下架，1-上架',
+    `sort_order` INT NOT NULL DEFAULT 0 COMMENT '排序',
+    `version` INT NOT NULL DEFAULT 1 COMMENT '版本号',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_sku_code` (`sku_code`),
+    KEY `idx_product_id` (`product_id`),
+    KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='SKU 表';
+
+-- 库存表
+CREATE TABLE IF NOT EXISTS `inventory` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '库存 ID',
+    `sku_id` BIGINT NOT NULL COMMENT 'SKU ID',
+    `warehouse_id` BIGINT DEFAULT 1 COMMENT '仓库 ID',
+    `total_stock` INT NOT NULL DEFAULT 0 COMMENT '总库存',
+    `available_stock` INT NOT NULL DEFAULT 0 COMMENT '可用库存',
+    `locked_stock` INT NOT NULL DEFAULT 0 COMMENT '锁定库存',
+    `damaged_stock` INT NOT NULL DEFAULT 0 COMMENT '残次库存',
+    `min_stock` INT NOT NULL DEFAULT 10 COMMENT '最低库存预警线',
+    `max_stock` INT DEFAULT NULL COMMENT '最高库存预警线',
+    `version` INT NOT NULL DEFAULT 1 COMMENT '版本号（乐观锁）',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_sku_warehouse` (`sku_id`, `warehouse_id`),
+    KEY `idx_warehouse_id` (`warehouse_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存表';
+
+-- 库存流水表
+CREATE TABLE IF NOT EXISTS `inventory_log` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '流水 ID',
+    `inventory_id` BIGINT NOT NULL COMMENT '库存 ID',
+    `sku_id` BIGINT NOT NULL COMMENT 'SKU ID',
+    `change_num` INT NOT NULL COMMENT '变动数量（正数入库，负数出库）',
+    `before_stock` INT NOT NULL COMMENT '变动前库存',
+    `after_stock` INT NOT NULL COMMENT '变动后库存',
+    `biz_type` VARCHAR(20) NOT NULL COMMENT '业务类型：PURCHASE-采购，SALE-销售，RETURN-退货，ADJUST-调整',
+    `biz_no` VARCHAR(50) DEFAULT NULL COMMENT '业务单号',
+    `remark` VARCHAR(500) DEFAULT NULL COMMENT '备注',
+    `operator_id` BIGINT DEFAULT NULL COMMENT '操作人 ID',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_inventory_id` (`inventory_id`),
+    KEY `idx_sku_id` (`sku_id`),
+    KEY `idx_biz_type` (`biz_type`),
+    KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存流水表';
+
+-- 仓库表
+CREATE TABLE IF NOT EXISTS `warehouse` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '仓库 ID',
+    `name` VARCHAR(100) NOT NULL COMMENT '仓库名称',
+    `code` VARCHAR(50) NOT NULL COMMENT '仓库编码',
+    `address` VARCHAR(200) DEFAULT NULL COMMENT '仓库地址',
+    `manager` VARCHAR(50) DEFAULT NULL COMMENT '负责人',
+    `phone` VARCHAR(20) DEFAULT NULL COMMENT '联系电话',
+    `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0-停用，1-启用',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='仓库表';
+
 -- 初始化默认数据
 INSERT INTO `product_categories` (`name`, `level`, `sort_order`) VALUES 
 ('电子产品', 1, 1),
@@ -215,6 +352,70 @@ INSERT INTO `product_categories` (`name`, `level`, `sort_order`) VALUES
 ('食品饮料', 1, 4),
 ('图书文具', 1, 5);
 
+-- 初始化默认角色
+INSERT INTO `role` (`role_name`, `role_code`, `description`, `status`) VALUES
+('超级管理员', 'SUPER_ADMIN', '系统超级管理员，拥有所有权限', 1),
+('管理员', 'ADMIN', '系统管理员', 1),
+('普通用户', 'USER', '普通用户', 1);
+
+-- 初始化默认权限
+INSERT INTO `permission` (`code`, `permission_name`, `type`, `parent_id`, `path`, `icon`, `sort`, `status`) VALUES
+-- 一级菜单
+('system', '系统管理', 'MENU', 0, '/system', 'Setting', 1, 1),
+('product_manage', '商品管理', 'MENU', 0, '/product', 'ShoppingCart', 2, 1),
+('order_manage', '订单管理', 'MENU', 0, '/order', 'Document', 3, 1),
+('inventory_manage', '库存管理', 'MENU', 0, '/inventory', 'Box', 4, 1),
+('quotation_manage', '报价管理', 'MENU', 0, '/quotation', 'Money', 5, 1),
+('user_manage', '用户管理', 'MENU', 0, '/user', 'User', 6, 1),
+('role_manage', '角色权限', 'MENU', 0, '/role', 'Lock', 7, 1),
+
+-- 系统管理子菜单
+('system:user', '用户管理', 'MENU', 1, '/system/user', 'User', 1, 1),
+('system:user:add', '新增用户', 'BUTTON', 8, '', '', 1, 1),
+('system:user:edit', '编辑用户', 'BUTTON', 8, '', '', 2, 1),
+('system:user:delete', '删除用户', 'BUTTON', 8, '', '', 3, 1),
+('system:role', '角色管理', 'MENU', 1, '/system/role', 'Role', 2, 1),
+('system:role:add', '新增角色', 'BUTTON', 11, '', '', 1, 1),
+('system:role:edit', '编辑角色', 'BUTTON', 11, '', '', 2, 1),
+('system:role:delete', '删除角色', 'BUTTON', 11, '', '', 3, 1),
+('system:role:assign', '分配权限', 'BUTTON', 11, '', '', 4, 1),
+('system:permission', '权限管理', 'MENU', 1, '/system/permission', 'Permission', 3, 1),
+
+-- 商品管理子菜单
+('product:list', '商品列表', 'MENU', 2, '/product/list', 'List', 1, 1),
+('product:add', '新增商品', 'BUTTON', 16, '', '', 1, 1),
+('product:edit', '编辑商品', 'BUTTON', 16, '', '', 2, 1),
+('product:delete', '删除商品', 'BUTTON', 16, '', '', 3, 1),
+('product:sku', 'SKU 管理', 'MENU', 2, '/product/sku', 'Sku', 2, 1),
+('product:sku:add', '新增 SKU', 'BUTTON', 19, '', '', 1, 1),
+('product:sku:edit', '编辑 SKU', 'BUTTON', 19, '', '', 2, 1),
+('product:sku:delete', '删除 SKU', 'BUTTON', 19, '', '', 3, 1),
+
+-- 订单管理子菜单
+('order:list', '订单列表', 'MENU', 3, '/order/list', 'Order', 1, 1),
+('order:detail', '订单详情', 'BUTTON', 22, '', '', 1, 1),
+('order:ship', '订单发货', 'BUTTON', 22, '', '', 2, 1),
+('order:cancel', '取消订单', 'BUTTON', 22, '', '', 3, 1),
+
+-- 库存管理子菜单
+('inventory:list', '库存列表', 'MENU', 4, '/inventory/list', 'Inventory', 1, 1),
+('inventory:adjust', '库存调整', 'BUTTON', 26, '', '', 1, 1),
+('inventory:warning', '库存预警', 'MENU', 4, '/inventory/warning', 'Warning', 2, 1),
+
+-- 报价管理子菜单
+('quotation:list', '报价列表', 'MENU', 5, '/quotation/list', 'Quotation', 1, 1),
+('quotation:audit', '报价审核', 'BUTTON', 29, '', '', 1, 1),
+('quotation:counter', '还价', 'BUTTON', 29, '', '', 2, 1);
+
+-- 给超级管理员分配所有权限
+INSERT INTO `role_permission` (`role_id`, `permission_id`) 
+SELECT 1, id FROM `permission`;
+
+-- 初始化默认仓库
+INSERT INTO `warehouse` (`name`, `code`, `address`, `status`) VALUES
+('主仓库', 'WH001', '默认仓库地址', 1);
+
+-- 初始化系统配置
 INSERT INTO `system_configs` (`config_key`, `config_value`, `config_type`, `description`, `is_public`) VALUES
 ('min_quotation_amount', '1.00', 'NUMBER', '最小报价金额', 0),
 ('max_quotation_amount', '1000000.00', 'NUMBER', '最大报价金额', 0),
