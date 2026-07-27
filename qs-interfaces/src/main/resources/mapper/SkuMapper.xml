@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotation.infrastructure.persistence.mapper.SkuMapper">
+
+    <resultMap id="SkuResultMap" type="com.quotation.domain.product.model.Sku">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="skuCode" column="sku_code"/>
+        <result property="attrs" column="attrs" typeHandler="org.apache.ibatis.type.JdbcType.VARCHAR"/>
+        <result property="price" column="price"/>
+        <result property="costPrice" column="cost_price"/>
+        <result property="stock" column="stock"/>
+        <result property="lockStock" column="lock_stock"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 根据商品 ID 查询 SKU 列表 -->
+    <select id="selectByProductId" resultMap="SkuResultMap">
+        SELECT * FROM sku WHERE product_id = #{productId} AND status = 1 ORDER BY id ASC
+    </select>
+
+    <!-- 根据 SKU 编码查询 -->
+    <select id="selectBySkuCode" resultMap="SkuResultMap">
+        SELECT * FROM sku WHERE sku_code = #{skuCode} LIMIT 1
+    </select>
+
+    <!-- 批量插入 SKU -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO sku (product_id, sku_code, attrs, price, cost_price, stock, status, created_at)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.productId}, #{item.skuCode}, #{item.attrs}, #{item.price}, #{item.costPrice}, 
+             #{item.stock}, #{item.status}, NOW())
+        </foreach>
+    </insert>
+
+    <!-- 更新库存（乐观锁） -->
+    <update id="updateStock">
+        UPDATE sku
+        SET stock = #{stock},
+            lock_stock = #{lockStock},
+            updated_at = NOW()
+        WHERE id = #{id}
+          AND stock = #{oldStock}
+          AND lock_stock = #{oldLockStock}
+    </update>
+
+</mapper>

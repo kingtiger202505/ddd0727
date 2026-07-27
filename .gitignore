@@ -4,9 +4,10 @@
 *.o
 *.obj
 *.out
+target/
 
 # Dependencies
-target/
+.m2/
 .gradle/
 
 # Logs and temp files
@@ -14,12 +15,30 @@ target/
 *.tmp
 *.swp
 
-# Editors
-.vscode/
-.idea/
-
 # Environment
 .env
 .env.local
 *.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Package manager caches
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
 ```
