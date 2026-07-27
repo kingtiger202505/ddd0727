@@ -99,29 +99,29 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import roleApi from '@/api/role';
-import permissionApi from '@/api/permission';
+import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getRoleList, createRole, updateRole, deleteRole, getRolePermissions, saveRolePermissions } from '@/api/role'
+import { getPermissionTree } from '@/api/permission'
 
 // 状态定义
-const loading = ref(false);
-const dialogVisible = ref(false);
-const permissionDialogVisible = ref(false);
-const dialogTitle = ref('新增角色');
-const roleFormRef = ref(null);
-const permissionTreeRef = ref(null);
-const currentRole = ref({});
+const loading = ref(false)
+const dialogVisible = ref(false)
+const permissionDialogVisible = ref(false)
+const dialogTitle = ref('新增角色')
+const roleFormRef = ref(null)
+const permissionTreeRef = ref(null)
+const currentRole = ref({})
 
 const pagination = reactive({
   currentPage: 1,
   pageSize: 10,
   total: 0
-});
+})
 
-const roleList = ref([]);
-const permissionTree = ref([]);
-const checkedPermissionIds = ref([]);
+const roleList = ref([])
+const permissionTree = ref([])
+const checkedPermissionIds = ref([])
 
 const roleForm = reactive({
   id: null,
@@ -129,121 +129,121 @@ const roleForm = reactive({
   roleCode: '',
   description: '',
   status: 1
-});
+})
 
 const roleRules = {
   roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
   roleCode: [{ required: true, message: '请输入角色编码', trigger: 'blur' }]
-};
+}
 
 // 方法定义
 const loadRoleList = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const res = await roleApi.getList({
+    const res = await getRoleList({
       page: pagination.currentPage,
       size: pagination.pageSize
-    });
-    roleList.value = res.data.records || [];
-    pagination.total = res.data.total || 0;
+    })
+    roleList.value = res.data?.list || []
+    pagination.total = res.data?.total || 0
   } catch (error) {
-    ElMessage.error('加载角色列表失败');
+    ElMessage.error('加载角色列表失败')
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const loadPermissions = async () => {
   try {
-    const res = await permissionApi.getTree();
-    permissionTree.value = res.data || [];
+    const res = await getPermissionTree()
+    permissionTree.value = res.data || []
   } catch (error) {
-    ElMessage.error('加载权限树失败');
+    ElMessage.error('加载权限树失败')
   }
-};
+}
 
 const openRoleDialog = () => {
-  dialogTitle.value = '新增角色';
-  resetRoleForm();
-  dialogVisible.value = true;
-};
+  dialogTitle.value = '新增角色'
+  resetRoleForm()
+  dialogVisible.value = true
+}
 
 const editRole = (row) => {
-  dialogTitle.value = '编辑角色';
-  Object.assign(roleForm, row);
-  dialogVisible.value = true;
-};
+  dialogTitle.value = '编辑角色'
+  Object.assign(roleForm, row)
+  dialogVisible.value = true
+}
 
 const resetRoleForm = () => {
-  if (roleFormRef.value) roleFormRef.value.resetFields();
-  roleForm.id = null;
-  roleForm.roleName = '';
-  roleForm.roleCode = '';
-  roleForm.description = '';
-  roleForm.status = 1;
-};
+  if (roleFormRef.value) roleFormRef.value.resetFields()
+  roleForm.id = null
+  roleForm.roleName = ''
+  roleForm.roleCode = ''
+  roleForm.description = ''
+  roleForm.status = 1
+}
 
 const submitRoleForm = async () => {
-  if (!roleFormRef.value) return;
+  if (!roleFormRef.value) return
   
   await roleFormRef.value.validate(async (valid) => {
-    if (!valid) return;
+    if (!valid) return
 
     try {
       if (roleForm.id) {
-        await roleApi.update(roleForm);
-        ElMessage.success('更新成功');
+        await updateRole(roleForm)
+        ElMessage.success('更新成功')
       } else {
-        await roleApi.create(roleForm);
-        ElMessage.success('创建成功');
+        await createRole(roleForm)
+        ElMessage.success('创建成功')
       }
-      dialogVisible.value = false;
-      loadRoleList();
+      dialogVisible.value = false
+      loadRoleList()
     } catch (error) {
-      ElMessage.error(error.response?.data?.msg || '操作失败');
+      ElMessage.error(error.response?.data?.msg || '操作失败')
     }
-  });
-};
+  })
+}
 
 const openPermissionDialog = async (row) => {
-  currentRole.value = row;
-  permissionDialogVisible.value = true;
-  checkedPermissionIds.value = [];
+  currentRole.value = row
+  permissionDialogVisible.value = true
+  checkedPermissionIds.value = []
   
   // 加载该角色的权限 ID 列表
   try {
-    const res = await roleApi.getPermissions(row.id);
-    checkedPermissionIds.value = res.data.map(p => p.permissionId || p.id);
+    const res = await getRolePermissions(row.id)
+    checkedPermissionIds.value = (res.data || []).map(p => p.permissionId || p.id)
     
-    await nextTick();
+    await nextTick()
     // 展开所有节点并勾选
     if (permissionTreeRef.value) {
-      permissionTreeRef.value.setCheckedKeys(checkedPermissionIds.value);
+      permissionTreeRef.value.setCheckedKeys(checkedPermissionIds.value)
     }
   } catch (error) {
-    ElMessage.error('加载角色权限失败');
+    ElMessage.error('加载角色权限失败')
   }
-};
+}
 
 const submitPermissions = async () => {
-  if (!permissionTreeRef.value) return;
+  if (!permissionTreeRef.value) return
   
-  const checkedKeys = permissionTreeRef.value.getCheckedKeys();
-  const halfCheckedKeys = permissionTreeRef.value.getHalfCheckedKeys();
+  const checkedKeys = permissionTreeRef.value.getCheckedKeys()
+  const halfCheckedKeys = permissionTreeRef.value.getHalfCheckedKeys()
   // 合并选中节点和半选节点（包含父节点）
-  const allCheckedKeys = [...checkedKeys, ...halfCheckedKeys];
+  const allCheckedKeys = [...checkedKeys, ...halfCheckedKeys]
   
   try {
-    await roleApi.savePermissions({
+    await saveRolePermissions({
       roleId: currentRole.value.id,
       permissionIds: allCheckedKeys
-    });
-    ElMessage.success('权限分配成功');
-    permissionDialogVisible.value = false;
+    })
+    ElMessage.success('权限分配成功')
+    permissionDialogVisible.value = false
   } catch (error) {
-    ElMessage.error(error.response?.data?.msg || '权限分配失败');
+    ElMessage.error(error.response?.data?.msg || '权限分配失败')
   }
-};
+}
 
 const deleteRole = (id) => {
   ElMessageBox.confirm('确定要删除该角色吗？删除后关联用户将失去此角色权限', '警告', {
@@ -252,19 +252,19 @@ const deleteRole = (id) => {
     type: 'warning'
   }).then(async () => {
     try {
-      await roleApi.delete(id);
-      ElMessage.success('删除成功');
-      loadRoleList();
+      await deleteRole(id)
+      ElMessage.success('删除成功')
+      loadRoleList()
     } catch (error) {
-      ElMessage.error('删除失败');
+      ElMessage.error('删除失败')
     }
-  });
-};
+  })
+}
 
 onMounted(() => {
-  loadRoleList();
-  loadPermissions();
-});
+  loadRoleList()
+  loadPermissions()
+})
 </script>
 
 <style scoped>

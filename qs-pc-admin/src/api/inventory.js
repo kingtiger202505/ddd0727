@@ -1,36 +1,36 @@
-import request from '@/utils/request';
-
-// 库存调整
-export function adjustStock(data) {
-  return request({
-    url: '/api/inventory/adjust',
-    method: 'post',
-    data
-  });
-}
+import request from '@/utils/request'
 
 // 获取库存列表
-export function getList(params) {
+export function getInventoryList(params) {
   return request({
-    url: '/api/inventory/list',
+    url: '/inventory/list',
     method: 'get',
     params
-  });
+  })
+}
+
+// 库存调整
+export function updateInventory(data) {
+  return request({
+    url: '/inventory',
+    method: 'put',
+    data
+  })
 }
 
 // 获取 SKU 库存详情
-export function getBySkuId(skuId) {
+export function getInventoryBySku(skuId) {
   return request({
-    url: `/api/inventory/sku/${skuId}`,
+    url: `/inventory/sku/${skuId}`,
     method: 'get'
-  });
+  })
 }
 
 // 库存预警列表
 export function getWarningList(params) {
   return request({
-    url: '/api/inventory/warning',
+    url: '/inventory/warning',
     method: 'get',
     params
-  });
+  })
 }

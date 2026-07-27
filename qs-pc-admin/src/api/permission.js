@@ -1,44 +1,44 @@
-import request from '@/utils/request';
+import request from '@/utils/request'
 
 // 获取权限树形结构
-export function getTree() {
+export function getPermissionTree() {
   return request({
-    url: '/api/permission/tree',
+    url: '/permission/tree',
     method: 'get'
-  });
+  })
 }
 
 // 获取所有权限列表
-export function getList(params) {
+export function getPermissionList(params) {
   return request({
-    url: '/api/permission/list',
+    url: '/permission/list',
     method: 'get',
     params
-  });
+  })
 }
 
 // 创建权限
-export function create(data) {
+export function createPermission(data) {
   return request({
-    url: '/api/permission',
+    url: '/permission',
     method: 'post',
     data
-  });
+  })
 }
 
 // 更新权限
-export function update(data) {
+export function updatePermission(data) {
   return request({
-    url: '/api/permission',
+    url: '/permission',
     method: 'put',
     data
-  });
+  })
 }
 
 // 删除权限
 export function deletePermission(id) {
   return request({
-    url: `/api/permission/${id}`,
+    url: `/permission/${id}`,
     method: 'delete'
-  });
+  })
 }

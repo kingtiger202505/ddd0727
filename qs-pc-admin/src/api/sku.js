@@ -1,44 +1,44 @@
-import request from '@/utils/request';
+import request from '@/utils/request'
 
 // 获取 SKU 列表
-export function getList(params) {
+export function getSkuList(params) {
   return request({
-    url: '/api/sku/list',
+    url: '/sku/list',
     method: 'get',
     params
-  });
+  })
 }
 
 // 创建 SKU
-export function create(data) {
+export function createSku(data) {
   return request({
-    url: '/api/sku',
+    url: '/sku',
     method: 'post',
     data
-  });
+  })
 }
 
 // 更新 SKU
-export function update(data) {
+export function updateSku(data) {
   return request({
-    url: '/api/sku',
+    url: '/sku',
     method: 'put',
     data
-  });
+  })
 }
 
 // 删除 SKU
 export function deleteSku(id) {
   return request({
-    url: `/api/sku/${id}`,
+    url: `/sku/${id}`,
     method: 'delete'
-  });
+  })
 }
 
 // 获取 SKU 详情
-export function getById(id) {
+export function getSkuById(id) {
   return request({
-    url: `/api/sku/${id}`,
+    url: `/sku/${id}`,
     method: 'get'
-  });
+  })
 }

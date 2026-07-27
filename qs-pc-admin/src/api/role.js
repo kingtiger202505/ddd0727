@@ -1,61 +1,61 @@
-import request from '@/utils/request';
+import request from '@/utils/request'
 
 // 获取角色列表
-export function getList(params) {
+export function getRoleList(params) {
   return request({
-    url: '/api/role/list',
+    url: '/role/list',
     method: 'get',
     params
-  });
+  })
 }
 
 // 创建角色
-export function create(data) {
+export function createRole(data) {
   return request({
-    url: '/api/role',
+    url: '/role',
     method: 'post',
     data
-  });
+  })
 }
 
 // 更新角色
-export function update(data) {
+export function updateRole(data) {
   return request({
-    url: '/api/role',
+    url: '/role',
     method: 'put',
     data
-  });
+  })
 }
 
 // 删除角色
 export function deleteRole(id) {
   return request({
-    url: `/api/role/${id}`,
+    url: `/role/${id}`,
     method: 'delete'
-  });
+  })
 }
 
 // 获取角色详情
-export function getById(id) {
+export function getRoleById(id) {
   return request({
-    url: `/api/role/${id}`,
+    url: `/role/${id}`,
     method: 'get'
-  });
+  })
 }
 
 // 获取角色的权限列表
-export function getPermissions(roleId) {
+export function getRolePermissions(roleId) {
   return request({
-    url: `/api/role/${roleId}/permissions`,
+    url: `/role/${roleId}/permissions`,
     method: 'get'
-  });
+  })
 }
 
 // 保存角色权限
-export function savePermissions(data) {
+export function saveRolePermissions(data) {
   return request({
-    url: '/api/role/permissions',
+    url: '/role/permissions',
     method: 'post',
     data
-  });
+  })
 }
