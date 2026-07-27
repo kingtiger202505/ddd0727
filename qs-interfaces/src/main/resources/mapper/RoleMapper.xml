@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quotation.infrastructure.persistence.mapper.RoleMapper">
+
+    <resultMap id="RoleResultMap" type="com.quotation.domain.user.model.Role">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- 根据用户 ID 查询角色列表 -->
+    <select id="selectByUserId" resultMap="RoleResultMap">
+        SELECT r.* FROM role r
+        INNER JOIN user_role ur ON r.id = ur.role_id
+        WHERE ur.user_id = #{userId} AND r.status = 1
+    </select>
+
+    <!-- 根据角色编码查询 -->
+    <select id="selectByRoleCode" resultMap="RoleResultMap">
+        SELECT * FROM role WHERE code = #{roleCode} LIMIT 1
+    </select>
+
+    <!-- 查询角色的权限 ID 列表 -->
+    <select id="selectPermissionIdsByRoleId" resultType="java.lang.Long">
+        SELECT permission_id FROM role_permission WHERE role_id = #{roleId}
+    </select>
+
+    <!-- 保存角色权限关联 -->
+    <insert id="saveRolePermissions">
+        INSERT INTO role_permission (role_id, permission_id)
+        VALUES
+        <foreach collection="permissionIds" item="permId" separator=",">
+            (#{roleId}, #{permId})
+        </foreach>
+    </insert>
+
+    <!-- 删除角色权限关联 -->
+    <delete id="deleteRolePermissions">
+        DELETE FROM role_permission WHERE role_id = #{roleId}
+    </delete>
+
+</mapper>
