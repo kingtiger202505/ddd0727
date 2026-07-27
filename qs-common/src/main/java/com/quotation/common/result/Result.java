@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 public class Result<T> implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private Integer code;
     private String message;
     private T data;
@@ -38,5 +38,19 @@ public class Result<T> implements Serializable {
         result.setCode(code);
         result.setMessage(message);
         return result;
+    }
+
+    /**
+     * 判断是否成功
+     */
+    public boolean isSuccess() {
+        return this.code != null && this.code == 200;
+    }
+
+    /**
+     * 判断是否失败
+     */
+    public boolean isError() {
+        return !isSuccess();
     }
 }

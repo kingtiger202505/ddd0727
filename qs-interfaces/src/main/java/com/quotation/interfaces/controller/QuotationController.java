@@ -2,6 +2,7 @@ package com.quotation.interfaces.controller;
 
 import com.quotation.application.dto.CreateQuotationCommand;
 import com.quotation.application.dto.QuotationDTO;
+import com.quotation.application.dto.UpdateQuotationCommand;
 import com.quotation.application.service.QuotationApplicationService;
 import com.quotation.common.result.Result;
 import org.springframework.web.bind.annotation.*;
@@ -9,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * 报价单控制器
+ */
 @RestController
-@RequestMapping("/api/quotation")
+@RequestMapping("/api/quotations")
 public class QuotationController {
 
     @Resource
@@ -25,51 +29,43 @@ public class QuotationController {
     }
 
     /**
+     * 更新报价单
+     */
+    @PutMapping("/update")
+    public Result<Boolean> update(@RequestBody UpdateQuotationCommand command) {
+        return quotationService.updateQuotation(command);
+    }
+
+    /**
      * 查询详情
      */
-    @GetMapping("/{id}")
+    @GetMapping("/detail/{id}")
     public Result<QuotationDTO> detail(@PathVariable Long id) {
         return quotationService.getQuotationDetail(id);
     }
 
     /**
-     * 列表查询
+     * 列表查询（不需要 userId 参数，从登录上下文获取）
      */
     @GetMapping("/list")
     public Result<List<QuotationDTO>> list(
-            @RequestParam Long userId,
             @RequestParam(required = false) String status) {
-        return quotationService.listQuotations(userId, status);
+        return quotationService.listQuotations(status);
     }
 
     /**
-     * 买家还价
+     * 批准报价
      */
-    @PostMapping("/counter-offer")
-    public Result<Boolean> counterOffer(
-            @RequestParam Long quotationId,
-            @RequestParam Long buyerId,
-            @RequestParam Long newPrice) {
-        return quotationService.counterOffer(quotationId, buyerId, newPrice);
+    @PostMapping("/approve/{id}")
+    public Result<Boolean> approve(@PathVariable Long id) {
+        return quotationService.approveQuotation(id);
     }
 
     /**
-     * 卖家接受报价
+     * 拒绝报价
      */
-    @PostMapping("/accept")
-    public Result<Boolean> accept(
-            @RequestParam Long quotationId,
-            @RequestParam Long sellerId) {
-        return quotationService.acceptQuotation(quotationId, sellerId);
-    }
-
-    /**
-     * 卖家拒绝报价
-     */
-    @PostMapping("/reject")
-    public Result<Boolean> reject(
-            @RequestParam Long quotationId,
-            @RequestParam Long sellerId) {
-        return quotationService.rejectQuotation(quotationId, sellerId);
+    @PostMapping("/reject/{id}")
+    public Result<Boolean> reject(@PathVariable Long id) {
+        return quotationService.rejectQuotation(id);
     }
 }
