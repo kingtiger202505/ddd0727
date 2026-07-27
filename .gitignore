@@ -1,83 +1,25 @@
 ```
-# Mini-program specific ignores
-qs-miniprogram/dist/
-qs-miniprogram/build/
-qs-miniprogram/.npm/
-qs-miniprogram/node_modules/
+# Compiled and build artifacts
+*.class
+*.o
+*.obj
+*.out
 
 # Dependencies
-node_modules/
-.npm/
-.yarn/
+target/
+.gradle/
 
 # Logs and temp files
 *.log
 *.tmp
 *.swp
 
-# Environment
-.env
-.env.local
-.env.*
-
 # Editors
 .vscode/
 .idea/
-*.swo
-*.swp
 
-# Build outputs
-dist/
-build/
-coverage/
-htmlcov/
-*.out
-
-# Python caches
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-.pytest_cache/
-.mypy_cache/
-
-# Java/Maven/Gradle
-target/
-.gradle/
-*.class
-*.jar
-*.war
-
-# C/C++
-*.o
-*.obj
-*.a
-*.so
-*.dll
-*.exe
-
-# Compressed files
-*.zip
-*.gz
-*.tar
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-*.tar.zst
+# Environment
+.env
+.env.local
+*.env.*
 ```
