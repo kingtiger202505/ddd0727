@@ -5,13 +5,13 @@ import com.quotation.application.dto.user.LoginCommand;
 import com.quotation.application.dto.user.RegisterCommand;
 import com.quotation.application.dto.user.UserDTO;
 import com.quotation.application.service.UserApplicationService;
-import com.quotation.common.result.Result;
+import com.quotation.interfaces.common.R;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 /**
- * 用户控制器
+ * 用户控制器 - RESTful API (支持小程序和管理端)
  */
 @RestController
 @RequestMapping("/api/users")
@@ -24,7 +24,7 @@ public class UserController {
      * 用户注册
      */
     @PostMapping("/register")
-    public Result<Long> register(@RequestBody RegisterCommand command) {
+    public R<Long> register(@RequestBody RegisterCommand command) {
         return userApplicationService.register(command);
     }
 
@@ -32,7 +32,7 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/login")
-    public Result<SaTokenInfo> login(@RequestBody LoginCommand command) {
+    public R<SaTokenInfo> login(@RequestBody LoginCommand command) {
         return userApplicationService.login(command);
     }
 
@@ -40,7 +40,7 @@ public class UserController {
      * 用户登出
      */
     @PostMapping("/logout")
-    public Result<Void> logout() {
+    public R<Void> logout() {
         return userApplicationService.logout();
     }
 
@@ -48,7 +48,7 @@ public class UserController {
      * 获取当前登录用户信息
      */
     @GetMapping("/current")
-    public Result<UserDTO> getCurrentUser() {
+    public R<UserDTO> getCurrentUser() {
         return userApplicationService.getCurrentUser();
     }
 
@@ -56,7 +56,7 @@ public class UserController {
      * 根据 ID 获取用户信息
      */
     @GetMapping("/{id}")
-    public Result<UserDTO> getUserById(@PathVariable Long id) {
+    public R<UserDTO> getUserById(@PathVariable Long id) {
         return userApplicationService.getUserById(id);
     }
 }
