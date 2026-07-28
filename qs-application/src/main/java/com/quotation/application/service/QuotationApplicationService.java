@@ -37,13 +37,13 @@ public class QuotationApplicationService {
             quotation.setPrice(command.getPrice());
             quotation.setStatus("PENDING");
             quotation.setVersion(1);
-            quotation.setCreateTime(new Date());
-            quotation.setUpdateTime(new Date());
+            quotation.setCreatedAt(LocalDateTime.now());
+            quotation.setUpdatedAt(LocalDateTime.now());
             
             quotationRepository.save(quotation);
             return Result.success(quotation.getId());
         } catch (Exception e) {
-            return Result.fail("创建报价单失败：" + e.getMessage());
+            return Result.error("创建报价单失败：" + e.getMessage());
         }
     }
 
@@ -55,19 +55,18 @@ public class QuotationApplicationService {
         try {
             Quotation quotation = quotationRepository.findById(command.getId());
             if (quotation == null) {
-                return Result.fail("报价单不存在");
+                return Result.error("报价单不存在");
             }
             
-            quotation.setCustomerName(command.getCustomerName());
             quotation.setProductName(command.getProductName());
             quotation.setQuantity(command.getQuantity());
             quotation.setPrice(command.getUnitPrice());
-            quotation.setUpdateTime(new Date());
+            quotation.setUpdatedAt(LocalDateTime.now());
             
             quotationRepository.updateWithOptimisticLock(quotation);
             return Result.success(true);
         } catch (Exception e) {
-            return Result.fail("更新报价单失败：" + e.getMessage());
+            return Result.error("更新报价单失败：" + e.getMessage());
         }
     }
 
@@ -78,13 +77,13 @@ public class QuotationApplicationService {
         try {
             Quotation quotation = quotationRepository.findById(id);
             if (quotation == null) {
-                return Result.fail("报价单不存在");
+                return Result.error("报价单不存在");
             }
             QuotationDTO dto = new QuotationDTO();
             BeanUtils.copyProperties(quotation, dto);
             return Result.success(dto);
         } catch (Exception e) {
-            return Result.fail("查询报价单详情失败：" + e.getMessage());
+            return Result.error("查询报价单详情失败：" + e.getMessage());
         }
     }
 
@@ -104,7 +103,7 @@ public class QuotationApplicationService {
             }).collect(Collectors.toList());
             return Result.success(dtoList);
         } catch (Exception e) {
-            return Result.fail("查询报价单列表失败：" + e.getMessage());
+            return Result.error("查询报价单列表失败：" + e.getMessage());
         }
     }
 
@@ -116,16 +115,16 @@ public class QuotationApplicationService {
         try {
             Quotation quotation = quotationRepository.findById(id);
             if (quotation == null) {
-                return Result.fail("报价单不存在");
+                return Result.error("报价单不存在");
             }
             
             quotation.setStatus("APPROVED");
-            quotation.setUpdateTime(new Date());
+            quotation.setUpdatedAt(LocalDateTime.now());
             
             quotationRepository.updateWithOptimisticLock(quotation);
             return Result.success(true);
         } catch (Exception e) {
-            return Result.fail("批准报价失败：" + e.getMessage());
+            return Result.error("批准报价失败：" + e.getMessage());
         }
     }
 

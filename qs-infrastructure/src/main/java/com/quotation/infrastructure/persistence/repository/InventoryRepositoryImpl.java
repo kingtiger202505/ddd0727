@@ -51,7 +51,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     @Override
     public List<Inventory> findLowStockItems() {
         LambdaQueryWrapper<Inventory> wrapper = new LambdaQueryWrapper<>();
-        wrapper.le(Inventory::getAvailableQuantity, Inventory::getMinStock);
+        wrapper.apply("available_quantity <= min_stock");
         return inventoryMapper.selectList(wrapper);
     }
 

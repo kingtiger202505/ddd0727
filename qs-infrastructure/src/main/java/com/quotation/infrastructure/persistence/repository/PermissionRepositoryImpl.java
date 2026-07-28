@@ -90,7 +90,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         List<Permission> allPermissions = findAll();
         // 只返回菜单类型
         return allPermissions.stream()
-                .filter(p -> p.getType() == 1)
+                .filter(p -> "MENU".equals(p.getType()))
                 .collect(Collectors.toList());
     }
 }

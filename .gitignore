@@ -1,9 +1,8 @@
-```
 # Dependencies
 node_modules/
 
 # Build outputs
-target/
+**/target/
 dist/
 build/
 coverage/
@@ -23,7 +22,7 @@ coverage/
 # Logs
 *.log
 
-# Python cache (if any Python files are present)
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
@@ -31,4 +30,3 @@ __pycache__/
 
 # Vue/Vite specific
 .vite/
-```

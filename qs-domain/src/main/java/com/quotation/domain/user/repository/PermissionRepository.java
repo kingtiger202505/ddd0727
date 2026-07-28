@@ -23,5 +23,9 @@ public interface PermissionRepository {
     
     List<Permission> findByRoleId(Long roleId);
     
+    List<Permission> findByUserId(Long userId);
+    
+    List<Permission> findMenuTree();
+    
     boolean existsByCode(String code);
 }

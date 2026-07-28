@@ -61,6 +61,11 @@ public class PermissionDTO implements Serializable {
      * 状态：1-启用，0-禁用
      */
     private Integer status;
+
+    /**
+     * 创建时间
+     */
+    private java.time.LocalDateTime createdAt;
     
     /**
      * 子权限列表

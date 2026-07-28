@@ -1,5 +1,6 @@
 package com.quotation.interfaces.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.quotation.application.user.RoleApplicationService;
 import com.quotation.application.user.dto.RoleDTO;
 import com.quotation.application.user.dto.PermissionDTO;

@@ -1,5 +1,6 @@
 package com.quotation.interfaces.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.quotation.application.user.PermissionApplicationService;
 import com.quotation.application.user.dto.PermissionDTO;
 import com.quotation.common.result.Result;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/permission")
+@SaCheckRole("ADMIN")
 public class PermissionController {
 
     @Resource
