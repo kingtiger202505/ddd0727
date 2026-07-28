@@ -1,19 +1,18 @@
 package com.quotation.application.service;
 
+import com.quotation.application.convert.QuotationConvert;
 import com.quotation.application.dto.CreateQuotationCommand;
 import com.quotation.application.dto.QuotationDTO;
 import com.quotation.application.dto.UpdateQuotationCommand;
 import com.quotation.common.result.Result;
 import com.quotation.domain.quotation.model.Quotation;
 import com.quotation.domain.quotation.repository.QuotationRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 报价应用服务
@@ -24,14 +23,16 @@ public class QuotationApplicationService {
     @Resource
     private QuotationRepository quotationRepository;
 
+    @Resource
+    private QuotationConvert quotationConvert;
+
     /**
      * 创建报价单
      */
     @Transactional
     public Result<Long> createQuotation(CreateQuotationCommand command) {
         try {
-            Quotation quotation = new Quotation();
-            BeanUtils.copyProperties(command, quotation);
+            Quotation quotation = quotationConvert.toEntity(command);
             quotation.setSellerId(command.getSellerId());
             quotation.setBuyerId(command.getBuyerId());
             quotation.setPrice(command.getPrice());
@@ -79,9 +80,7 @@ public class QuotationApplicationService {
             if (quotation == null) {
                 return Result.error("报价单不存在");
             }
-            QuotationDTO dto = new QuotationDTO();
-            BeanUtils.copyProperties(quotation, dto);
-            return Result.success(dto);
+            return Result.success(quotationConvert.toDTO(quotation));
         } catch (Exception e) {
             return Result.error("查询报价单详情失败：" + e.getMessage());
         }
@@ -92,16 +91,9 @@ public class QuotationApplicationService {
      */
     public Result<List<QuotationDTO>> listQuotations(String status) {
         try {
-            // TODO: 从登录上下文获取当前用户 ID
             Long currentUserId = 1L; // 临时使用固定值
-            
             List<Quotation> quotations = quotationRepository.findByUserIdAndStatus(currentUserId, status);
-            List<QuotationDTO> dtoList = quotations.stream().map(q -> {
-                QuotationDTO dto = new QuotationDTO();
-                BeanUtils.copyProperties(q, dto);
-                return dto;
-            }).collect(Collectors.toList());
-            return Result.success(dtoList);
+            return Result.success(quotationConvert.toDTOList(quotations));
         } catch (Exception e) {
             return Result.error("查询报价单列表失败：" + e.getMessage());
         }

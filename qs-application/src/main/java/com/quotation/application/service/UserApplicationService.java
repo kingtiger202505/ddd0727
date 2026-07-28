@@ -6,11 +6,11 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.quotation.application.dto.user.LoginCommand;
 import com.quotation.application.dto.user.RegisterCommand;
 import com.quotation.application.dto.user.UserDTO;
+import com.quotation.application.user.convert.UserConvert;
 import com.quotation.common.exception.BusinessException;
 import com.quotation.common.result.Result;
 import com.quotation.domain.user.model.User;
 import com.quotation.domain.user.repository.UserRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -26,6 +26,9 @@ public class UserApplicationService {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    private UserConvert userConvert;
 
     /**
      * 用户注册
@@ -139,8 +142,7 @@ public class UserApplicationService {
         }
         
         User user = userOpt.get();
-        UserDTO dto = new UserDTO();
-        BeanUtils.copyProperties(user, dto);
+        UserDTO dto = userConvert.toDTO(user);
         dto.setCreateTime(user.getCreatedAt());
         
         return Result.success(dto);
@@ -157,8 +159,7 @@ public class UserApplicationService {
         }
         
         User user = userOpt.get();
-        UserDTO dto = new UserDTO();
-        BeanUtils.copyProperties(user, dto);
+        UserDTO dto = userConvert.toDTO(user);
         dto.setCreateTime(user.getCreatedAt());
         
         return Result.success(dto);

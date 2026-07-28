@@ -40,6 +40,11 @@ public interface OrderRepository {
     Optional<Order> findByQuotationId(Long quotationId);
     
     /**
+     * 多条件查询订单列表
+     */
+    List<Order> findByConditions(String orderNo, String status, Long buyerId, Long sellerId);
+
+    /**
      * 查询所有订单
      */
     List<Order> findAll();

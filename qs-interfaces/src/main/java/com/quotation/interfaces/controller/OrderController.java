@@ -19,6 +19,15 @@ public class OrderController {
     private OrderApplicationService orderService;
 
     /**
+     * 多条件分页查询订单列表（PC管理端）
+     */
+    @GetMapping("/list")
+    public Result<List<OrderDTO>> list(OrderQuery query) {
+        List<OrderDTO> list = orderService.queryOrders(query);
+        return Result.success(list);
+    }
+
+    /**
      * 创建订单
      */
     @PostMapping("/create")

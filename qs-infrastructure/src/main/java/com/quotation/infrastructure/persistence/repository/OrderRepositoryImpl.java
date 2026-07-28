@@ -60,6 +60,25 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public List<Order> findByConditions(String orderNo, String status, Long buyerId, Long sellerId) {
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        if (orderNo != null && !orderNo.trim().isEmpty()) {
+            wrapper.like(Order::getOrderNo, orderNo.trim());
+        }
+        if (status != null && !status.trim().isEmpty()) {
+            wrapper.eq(Order::getStatus, status.trim());
+        }
+        if (buyerId != null) {
+            wrapper.eq(Order::getBuyerId, buyerId);
+        }
+        if (sellerId != null) {
+            wrapper.eq(Order::getSellerId, sellerId);
+        }
+        wrapper.orderByDesc(Order::getCreatedAt);
+        return orderMapper.selectList(wrapper);
+    }
+
+    @Override
     public List<Order> findAll() {
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(Order::getCreatedAt);

@@ -36,6 +36,9 @@ public class OrderApplicationService {
     @Resource
     private ProductRepository productRepository;
 
+    @Resource
+    private com.quotation.application.convert.OrderConvert orderConvert;
+
     /**
      * 创建订单
      */
@@ -100,6 +103,21 @@ public class OrderApplicationService {
         return orderRepository.findById(id)
             .map(this::convertToDTO)
             .orElseThrow(() -> new BusinessException("订单不存在"));
+    }
+
+    /**
+     * 多条件查询订单列表（管理端）
+     */
+    public List<OrderDTO> queryOrders(com.quotation.application.dto.order.OrderQuery query) {
+        String orderNo = query != null ? query.getOrderNo() : null;
+        String status = query != null ? query.getStatus() : null;
+        Long buyerId = query != null ? query.getBuyerId() : null;
+        Long sellerId = query != null ? query.getSellerId() : null;
+        
+        return orderRepository.findByConditions(orderNo, status, buyerId, sellerId)
+            .stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -209,26 +227,7 @@ public class OrderApplicationService {
     }
 
     private OrderDTO convertToDTO(Order order) {
-        OrderDTO dto = new OrderDTO();
-        dto.setId(order.getId());
-        dto.setOrderNo(order.getOrderNo());
-        dto.setBuyerId(order.getBuyerId());
-        dto.setSellerId(order.getSellerId());
-        dto.setQuotationId(order.getQuotationId());
-        dto.setTotalAmount(order.getTotalAmount());
-        dto.setDiscountAmount(order.getDiscountAmount());
-        dto.setActualAmount(order.getActualAmount());
-        dto.setStatus(order.getStatus());
-        dto.setStatusText(getStatusText(order.getStatus()));
-        dto.setPaymentMethod(order.getPaymentMethod());
-        dto.setPaymentTime(order.getPaymentTime());
-        dto.setShippingAddress(order.getShippingAddress());
-        dto.setReceiverName(order.getReceiverName());
-        dto.setReceiverPhone(order.getReceiverPhone());
-        dto.setRemark(order.getRemark());
-        dto.setCreatedAt(order.getCreatedAt());
-        dto.setUpdatedAt(order.getUpdatedAt());
-        return dto;
+        return orderConvert.toDTO(order);
     }
 
     private String getStatusText(Integer status) {
