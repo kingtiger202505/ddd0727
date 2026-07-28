@@ -4,6 +4,8 @@ server:
 
 # Spring 配置
 spring:
+  profiles:
+    active: dev
   application:
     name: quotation-system
 

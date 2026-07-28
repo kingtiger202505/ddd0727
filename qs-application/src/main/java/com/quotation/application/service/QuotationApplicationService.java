@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,16 +137,16 @@ public class QuotationApplicationService {
         try {
             Quotation quotation = quotationRepository.findById(id);
             if (quotation == null) {
-                return Result.fail("报价单不存在");
+                return Result.error("报价单不存在");
             }
             
             quotation.setStatus("REJECTED");
-            quotation.setUpdateTime(new Date());
+            quotation.setUpdatedAt(LocalDateTime.now());
             
             quotationRepository.updateWithOptimisticLock(quotation);
             return Result.success(true);
         } catch (Exception e) {
-            return Result.fail("拒绝报价失败：" + e.getMessage());
+            return Result.error("拒绝报价失败：" + e.getMessage());
         }
     }
 }

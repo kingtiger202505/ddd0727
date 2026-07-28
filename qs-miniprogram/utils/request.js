@@ -29,7 +29,7 @@ const request = (options) => {
       data: options.data || {},
       header: {
         'Content-Type': 'application/json',
-        'Authorization': getToken() ? `Bearer ${getToken()}` : ''
+        'Authorization': getToken() || ''
       },
       success: (res) => {
         if (res.statusCode === 200) {

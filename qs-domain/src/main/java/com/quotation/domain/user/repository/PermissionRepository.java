@@ -21,5 +21,7 @@ public interface PermissionRepository {
     
     void deleteById(Long id);
     
+    List<Permission> findByRoleId(Long roleId);
+    
     boolean existsByCode(String code);
 }

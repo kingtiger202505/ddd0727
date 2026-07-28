@@ -40,6 +40,12 @@
             <scope>runtime</scope>
         </dependency>
         
+        <!-- javax.annotation (@Resource) -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+        
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

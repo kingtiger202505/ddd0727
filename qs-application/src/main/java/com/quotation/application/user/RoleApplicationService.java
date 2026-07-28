@@ -140,13 +140,12 @@ public class RoleApplicationService {
         PermissionDTO dto = new PermissionDTO();
         dto.setId(permission.getId());
         dto.setCode(permission.getCode());
-        dto.setName(permission.getName());
+        dto.setPermissionName(permission.getPermissionName());
         dto.setType(permission.getType());
         dto.setParentId(permission.getParentId());
         dto.setPath(permission.getPath());
         dto.setIcon(permission.getIcon());
         dto.setSort(permission.getSort());
-        dto.setCreatedAt(permission.getCreatedAt());
         return dto;
     }
 }

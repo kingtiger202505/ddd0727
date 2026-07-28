@@ -2,7 +2,7 @@ package com.quotation.interfaces.controller;
 
 import com.quotation.application.product.SkuApplicationService;
 import com.quotation.application.product.dto.SkuDTO;
-import com.quotation.interfaces.dto.ApiResponse;
+import com.quotation.common.result.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,73 +22,73 @@ public class SkuController {
      * 根据 ID 获取 SKU
      */
     @GetMapping("/{id}")
-    public ApiResponse<SkuDTO> getById(@PathVariable Long id) {
+    public Result<SkuDTO> getById(@PathVariable Long id) {
         return skuApplicationService.getById(id)
-                .map(ApiResponse::success)
-                .orElse(ApiResponse.error("SKU 不存在"));
+                .map(Result::success)
+                .orElse(Result.error("SKU 不存在"));
     }
 
     /**
      * 根据商品 ID 获取 SKU 列表
      */
     @GetMapping("/product/{productId}")
-    public ApiResponse<List<SkuDTO>> getByProductId(@PathVariable Long productId) {
+    public Result<List<SkuDTO>> getByProductId(@PathVariable Long productId) {
         List<SkuDTO> list = skuApplicationService.getByProductId(productId);
-        return ApiResponse.success(list);
+        return Result.success(list);
     }
 
     /**
      * 根据 SKU 编码获取
      */
     @GetMapping("/code/{skuCode}")
-    public ApiResponse<SkuDTO> getBySkuCode(@PathVariable String skuCode) {
+    public Result<SkuDTO> getBySkuCode(@PathVariable String skuCode) {
         return skuApplicationService.getBySkuCode(skuCode)
-                .map(ApiResponse::success)
-                .orElse(ApiResponse.error("SKU 不存在"));
+                .map(Result::success)
+                .orElse(Result.error("SKU 不存在"));
     }
 
     /**
      * 获取所有 SKU
      */
     @GetMapping("/list")
-    public ApiResponse<List<SkuDTO>> getAll() {
+    public Result<List<SkuDTO>> getAll() {
         List<SkuDTO> list = skuApplicationService.getAll();
-        return ApiResponse.success(list);
+        return Result.success(list);
     }
 
     /**
      * 保存 SKU
      */
     @PostMapping
-    public ApiResponse<SkuDTO> save(@RequestBody SkuDTO dto) {
+    public Result<SkuDTO> save(@RequestBody SkuDTO dto) {
         SkuDTO saved = skuApplicationService.save(dto);
-        return ApiResponse.success(saved);
+        return Result.success(saved);
     }
 
     /**
      * 批量保存 SKU
      */
     @PostMapping("/batch")
-    public ApiResponse<List<SkuDTO>> batchSave(@RequestBody List<SkuDTO> dtos) {
+    public Result<List<SkuDTO>> batchSave(@RequestBody List<SkuDTO> dtos) {
         List<SkuDTO> savedList = skuApplicationService.batchSave(dtos);
-        return ApiResponse.success(savedList);
+        return Result.success(savedList);
     }
 
     /**
      * 删除 SKU
      */
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteById(@PathVariable Long id) {
+    public Result<Void> deleteById(@PathVariable Long id) {
         skuApplicationService.deleteById(id);
-        return ApiResponse.success();
+        return Result.success();
     }
 
     /**
      * 检查 SKU 编码是否存在
      */
     @GetMapping("/exists/{skuCode}")
-    public ApiResponse<Boolean> existsBySkuCode(@PathVariable String skuCode) {
+    public Result<Boolean> existsBySkuCode(@PathVariable String skuCode) {
         boolean exists = skuApplicationService.existsBySkuCode(skuCode);
-        return ApiResponse.success(exists);
+        return Result.success(exists);
     }
 }
